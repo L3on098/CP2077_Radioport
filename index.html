@@ -3,102 +3,431 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moje Internetowe Radio</title>
+    <title>RADIOPORT - Cyberpunk Radio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cyber-cyan: #00f0ff;
+            --cyber-red: #ff0055;
+            --cyber-dark: #0b0b0f;
+            --cyber-panel: #121218;
+            --cyber-grey: #4e4e5a;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
+            background-color: var(--cyber-dark);
             color: #ffffff;
-            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            letter-spacing: 1px;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #1e1e1e;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        button {
-            background-color: #1db954;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            margin: 10px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #1ed760;
-            transform: scale(1.05);
-        }
-        .news-box {
-            margin-top: 30px;
-            padding: 15px;
-            background: #282828;
-            border-radius: 10px;
-            text-align: left;
-            display: none; /* Domyślnie ukryte */
-        }
-        audio {
-            margin-top: 20px;
+
+        .radioport-container {
             width: 100%;
+            max-width: 550px;
+            background: var(--cyber-panel);
+            border: 1px solid var(--cyber-red);
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.15);
+            position: relative;
         }
-        .toggle-btn {
-            background-color: #555;
+
+        /* Nagłówek w stylu Cyberpunk */
+        .header {
+            border: 1px solid var(--cyber-red);
+            padding: 8px 15px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-tag {
+            font-size: 10px;
+            color: var(--cyber-red);
+        }
+
+        /* Panel "Now Playing" */
+        .now-playing-panel {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 0, 85, 0.2);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cover-art {
+            width: 120px;
+            height: 120px;
+            background: #1a1a24;
+            border: 1px dashed var(--cyber-cyan);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--cyber-cyan);
+            font-size: 12px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .track-label {
+            font-size: 11px;
+            color: var(--cyber-grey);
+        }
+
+        .track-title {
+            font-size: 18px;
+            color: var(--cyber-red);
+            font-weight: 700;
+            margin: 5px 0;
+            text-shadow: 0 0 5px rgba(255, 0, 85, 0.3);
+        }
+
+        .track-artist {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        /* Opcje: Newsy i Głośność */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-left: 3px solid var(--cyber-cyan);
+        }
+
+        /* Przełącznik dla Newsów */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .3s;
+            border: 1px solid var(--cyber-grey);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--cyber-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: #000;
+        }
+
+        /* Lista Stacji */
+        .station-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding-right: 5px;
+        }
+
+        /* Customowy Scrollbar */
+        .station-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .station-list::-webkit-scrollbar-thumb {
+            background: var(--cyber-red);
+        }
+
+        .station-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+            font-size: 15px;
+        }
+
+        .station-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .station-item.active {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+
+        .station-freq {
+            font-weight: 700;
+            margin-right: 15px;
+            min-width: 55px;
+        }
+
+        /* Niewidzialny odtwarzacz HTML5 */
+        audio {
+            display: none;
+        }
+
+        /* Stopka w stylu HUD gry */
+        .footer-hud {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 11px;
+            color: var(--cyber-grey);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📻 Moje Stacje Radiowe</h1>
-    <p>Wybierz stację, aby rozpocząć odtwarzanie:</p>
+<div class="radioport-container">
+    <div class="header">
+        <span>RADIOPORT</span>
+        <span class="header-tag">SYS.VER_2.77</span>
+    </div>
 
-    <button onclick="playRadio('https://example.com/stream1.mp3', 'Radio Rock')">🎸 Radio Rock</button>
-    <button onclick="playRadio('https://example.com/stream2.mp3', 'Radio Pop')">🎵 Radio Pop</button>
-    <button onclick="playRadio('https://example.com/stream3.mp3', 'Chillout Zone')">☕ Chillout Zone</button>
+    <div class="now-playing-panel">
+        <div class="cover-art" id="station-logo">NO SIGNAL</div>
+        <div class="track-info">
+            <div>
+                <div class="track-label">NOW PLAYING</div>
+                <div class="track-title" id="track-title">WYBIERZ STACJĘ</div>
+                <div class="track-artist" id="track-artist">—</div>
+            </div>
+            <div class="track-label" id="playback-status">SYSTEM IDLE</div>
+        </div>
+    </div>
 
-    <h3 id="current-station">Teraz odtwarzane: Brak</h3>
-    
-    <audio id="audio-player" controls></audio>
+    <div class="controls-row">
+        <div class="toggle-container">
+            <span>PREZENTER / NEWSY:</span>
+            <label class="switch">
+                <input type="checkbox" id="news-toggle" onchange="toggleNewsMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div style="font-size: 12px; display: flex; gap: 10px;">
+            <span>VOL:</span>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" oninput="changeVolume(this.value)" style="accent-color: var(--cyber-cyan); width: 80px;">
+        </div>
+    </div>
 
-    <hr style="border: 1px solid #333; margin: 30px 0;">
+    <div class="station-list" id="station-list">
+        </div>
 
-    <button class="toggle-btn" onclick="toggleNews()">📰 Pokaż/Ukryj Newsy</button>
+    <audio id="cyber-player" onended="trackEnded()"></audio>
 
-    <div id="news-section" class="news-box">
-        <h3>🔥 Najnowsze Ogłoszenia</h3>
-        <ul>
-            <li><strong>14.07.2026:</strong> Dodaliśmy nową stację Chillout!</li>
-            <li><strong>10.07.2026:</strong> Prace konserwacyjne zakończone.</li>
-        </ul>
+    <div class="footer-hud">
+        <span>[F] WYBIERZ STACJĘ</span>
+        <span>STATUS: ONLINE</span>
     </div>
 </div>
 
 <script>
-    const player = document.getElementById('audio-player');
-    const stationTitle = document.getElementById('current-station');
-    const newsSection = document.getElementById('news-section');
+    // 14 Stacji z kilkoma przykładowymi utworami (zastąp adresy URL swoimi linkami mp3!)
+    const stations = [
+        {
+            name: "Ritual FM", freq: "96.1", logo: "⚡ RITUAL",
+            playlist: [
+                { title: "Friday Night Fire Fight", artist: "The Rubicones", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+                { title: "Cyber-Grave", artist: "Maelstrom", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }
+            ]
+        },
+        {
+            name: "Body Heat Radio", freq: "98.7", logo: "🔥 BODY HEAT",
+            playlist: [
+                { title: "I Want to Stay at Your House", artist: "Rosa Walton", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+                { title: "History", artist: "Gazelle Twin", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" }
+            ]
+        },
+        {
+            name: "Impulse FM", freq: "99.9", logo: "🔊 IMPULSE",
+            playlist: [
+                { title: "Metropolis", artist: "DJ Kovalski", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+            ]
+        },
+        { name: "The Dirge", freq: "101.9", logo: "💀 DIRGE", playlist: [{ title: "Graves", artist: "Konrad OldMoney", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }] },
+        { name: "Radio Pebkac", freq: "103.5", logo: "💻 PEBKAC", playlist: [{ title: "Tinfiddle", artist: "Sebastian Robertson", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }] },
+        { name: "30 Principales", freq: "106.9", logo: "💃 30 PRINC", playlist: [{ title: "Barrio", artist: "Chico", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }] },
+        { name: "Morro Rock Radio", freq: "107.3", logo: "🎸 MORRO", playlist: [{ title: "Never Fade Away", artist: "Samurai", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }] },
+        { name: "Dark Star", freq: "107.5", logo: "☄️ DARK STAR", playlist: [{ title: "Quantum Chaos", artist: "Void", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }] },
+        { name: "Vexelstrom", freq: "101.1", logo: "⚡ VEXEL", playlist: [{ title: "Resist and Disorder", artist: "Rezodrone", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" }] },
+        { name: "Pacific Dreams", freq: "102.7", logo: "🌊 PACIFIC", playlist: [{ title: "Practical Tracks", artist: "Pacific Rim", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" }] },
+        { name: "Night FM", freq: "105.5", logo: "🌃 NIGHT", playlist: [{ title: "Neo-Tokyo Synth", artist: "Vector", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }] },
+        { name: "Radio Samizdat", freq: "91.9", logo: "📻 SAMIZDAT", playlist: [{ title: "Uprising", artist: "Sokolov", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" }] },
+        { name: "Growl FM", freq: "104.3", logo: "🐺 GROWL", playlist: [{ title: "Flatline", artist: "Sasha", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }] },
+        { name: "Downtown Radio", freq: "89.3", logo: "🏙️ DOWNTOWN", playlist: [{ title: "Street Kid Blues", artist: "V", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" }] }
+    ];
 
-    // Funkcja zmieniająca źródło dźwięku i uruchamiająca radio
-    function playRadio(url, name) {
-        player.src = url;
-        player.play();
-        stationTitle.innerText = "Teraz odtwarzane: " + name;
+    // Pliki z "newsami" / komunikatami prezentera radiowego
+    const newsClips = [
+        "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg", // Zastąp swoimi newsami mp3/ogg
+        "https://actions.google.com/sounds/v1/science_fiction/teleport_vortex.ogg"
+    ];
+
+    let currentStationIndex = null;
+    let currentTrackIndex = 0;
+    let playedSongsCounter = 0;
+    let isPlayingNews = false;
+    let newsEnabled = false;
+
+    const player = document.getElementById('cyber-player');
+    const stationListContainer = document.getElementById('station-list');
+    const trackTitleUI = document.getElementById('track-title');
+    const trackArtistUI = document.getElementById('track-artist');
+    const stationLogoUI = document.getElementById('station-logo');
+    const playbackStatusUI = document.getElementById('playback-status');
+
+    // Generowanie listy stacji w HTML
+    function buildStationList() {
+        stationListContainer.innerHTML = '';
+        stations.forEach((station, index) => {
+            const div = document.createElement('div');
+            div.className = 'station-item';
+            div.id = `station-${index}`;
+            div.onclick = () => selectStation(index);
+            div.innerHTML = `<span class="station-freq">${station.freq}</span> <span>${station.name}</span>`;
+            stationListContainer.appendChild(div);
+        });
     }
 
-    // Funkcja pokazująca/ukrywająca newsy
-    function toggleNews() {
-        if (newsSection.style.display === "none" || newsSection.style.display === "") {
-            newsSection.style.display = "block";
+    // Wybór i uruchomienie stacji
+    function selectStation(index) {
+        // Usuwanie aktywnej klasy z poprzedniej stacji
+        if (currentStationIndex !== null) {
+            document.getElementById(`station-${currentStationIndex}`).classList.remove('active');
+        }
+
+        currentStationIndex = index;
+        currentTrackIndex = 0;
+        isPlayingNews = false;
+
+        document.getElementById(`station-${index}`).classList.add('active');
+        playCurrentTrack();
+    }
+
+    // Odtwarzanie aktualnego utworu ze stacji
+    function playCurrentTrack() {
+        const station = stations[currentStationIndex];
+        const track = station.playlist[currentTrackIndex];
+
+        stationLogoUI.innerText = station.logo;
+        trackTitleUI.innerText = track.title;
+        trackArtistUI.innerText = track.artist;
+        playbackStatusUI.innerText = "STREAMING...";
+
+        player.src = track.url;
+        player.play();
+    }
+
+    // Funkcja wywoływana po zakończeniu odtwarzania utworu
+    function trackEnded() {
+        if (isPlayingNews) {
+            // Skończył się news -> wróć do muzyki
+            isPlayingNews = false;
+            playCurrentTrack();
         } else {
-            newsSection.style.display = "none";
+            playedSongsCounter++;
+            
+            // Jeśli włączone są newsy i minęła określona liczba utworów (np. 2)
+            if (newsEnabled && playedSongsCounter >= 2) {
+                playedSongsCounter = 0;
+                playNews();
+            } else {
+                nextTrack();
+            }
         }
     }
+
+    // Odtwarzanie losowej wstawki z newsami
+    function playNews() {
+        isPlayingNews = true;
+        trackTitleUI.innerText = "⚠️ TRANSMISJA WIADOMOŚCI ⚠️";
+        trackArtistUI.innerText = "NIGHT CITY NEWS";
+        playbackStatusUI.innerText = "BROADCASTING NEWS...";
+
+        const randomNewsUrl = newsClips[Math.floor(Math.random() * newsClips.length)];
+        player.src = randomNewsUrl;
+        player.play();
+    }
+
+    // Przejście do kolejnego utworu na stacji
+    function nextTrack() {
+        const station = stations[currentStationIndex];
+        currentTrackIndex = (currentTrackIndex + 1) % station.playlist.length; // pętla odtwarzania
+        playCurrentTrack();
+    }
+
+    // Włączenie / wyłączenie trybu newsów
+    function toggleNewsMode() {
+        newsEnabled = document.getElementById('news-toggle').checked;
+        playedSongsCounter = 0;
+    }
+
+    // Regulacja głośności
+    function changeVolume(val) {
+        player.volume = val;
+    }
+
+    // Start aplikacji
+    buildStationList();
 </script>
 
 </body>
