@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje Internetowe Radio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        button {
+            background-color: #1db954;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #1ed760;
+            transform: scale(1.05);
+        }
+        .news-box {
+            margin-top: 30px;
+            padding: 15px;
+            background: #282828;
+            border-radius: 10px;
+            text-align: left;
+            display: none; /* Domyślnie ukryte */
+        }
+        audio {
+            margin-top: 20px;
+            width: 100%;
+        }
+        .toggle-btn {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📻 Moje Stacje Radiowe</h1>
+    <p>Wybierz stację, aby rozpocząć odtwarzanie:</p>
+
+    <button onclick="playRadio('https://example.com/stream1.mp3', 'Radio Rock')">🎸 Radio Rock</button>
+    <button onclick="playRadio('https://example.com/stream2.mp3', 'Radio Pop')">🎵 Radio Pop</button>
+    <button onclick="playRadio('https://example.com/stream3.mp3', 'Chillout Zone')">☕ Chillout Zone</button>
+
+    <h3 id="current-station">Teraz odtwarzane: Brak</h3>
+    
+    <audio id="audio-player" controls></audio>
+
+    <hr style="border: 1px solid #333; margin: 30px 0;">
+
+    <button class="toggle-btn" onclick="toggleNews()">📰 Pokaż/Ukryj Newsy</button>
+
+    <div id="news-section" class="news-box">
+        <h3>🔥 Najnowsze Ogłoszenia</h3>
+        <ul>
+            <li><strong>14.07.2026:</strong> Dodaliśmy nową stację Chillout!</li>
+            <li><strong>10.07.2026:</strong> Prace konserwacyjne zakończone.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const player = document.getElementById('audio-player');
+    const stationTitle = document.getElementById('current-station');
+    const newsSection = document.getElementById('news-section');
+
+    // Funkcja zmieniająca źródło dźwięku i uruchamiająca radio
+    function playRadio(url, name) {
+        player.src = url;
+        player.play();
+        stationTitle.innerText = "Teraz odtwarzane: " + name;
+    }
+
+    // Funkcja pokazująca/ukrywająca newsy
+    function toggleNews() {
+        if (newsSection.style.display === "none" || newsSection.style.display === "") {
+            newsSection.style.display = "block";
+        } else {
+            newsSection.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
