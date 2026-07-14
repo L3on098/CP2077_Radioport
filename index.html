@@ -66,6 +66,7 @@
             margin-bottom: 20px;
         }
 
+        /* Kontener na okładkę/logo */
         .cover-art {
             width: 120px;
             height: 120px;
@@ -74,10 +75,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden; /* Aby obrazek nie wystawał */
+        }
+
+        .cover-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Dopasowanie obrazka do kwadratu */
+        }
+
+        .cover-placeholder {
             color: var(--cyber-cyan);
             font-size: 12px;
             text-align: center;
             font-weight: 700;
+            padding: 5px;
         }
 
         .track-info {
@@ -206,7 +218,6 @@
             text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
         }
 
-        /* Styl dla przycisku wyłączenia radia */
         .station-item.off-button {
             border: 1px dotted rgba(255, 0, 85, 0.3);
             color: var(--cyber-red);
@@ -246,7 +257,9 @@
     </div>
 
     <div class="now-playing-panel">
-        <div class="cover-art" id="station-logo">NO SIGNAL</div>
+        <div class="cover-art" id="station-logo-container">
+            <div class="cover-placeholder" id="station-placeholder">NO SIGNAL</div>
+        </div>
         <div class="track-info">
             <div>
                 <div class="track-label">NOW PLAYING</div>
@@ -275,46 +288,56 @@
         <div class="station-item off-button" id="station-off" onclick="turnRadioOff()">
             <span class="station-freq">OFF</span> <span>WYŁĄCZ RADIO (BRAK STACJI)</span>
         </div>
-        </div>
+    </div>
 
     <audio id="cyber-player" onended="trackEnded()"></audio>
 
     <div class="footer-hud">
-        <span>[F] WYBIERZ STACJĘ</span>
+        <span>WYBIERZ STACJĘ</span>
         <span>STATUS: ONLINE</span>
     </div>
 </div>
 
 <script>
-    // 14 Stacji
+    // 14 Stacji - Zastąp 'https://link_do_obrazka.png' swoimi linkami do zdjęć logo!
     const stations = [
-        { name: "Ritual FM", freq: "96.1", logo: "⚡ RITUAL", playlist: [{ title: "Friday Night Fire Fight", artist: "The Rubicones", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }] },
-        { name: "Body Heat Radio", freq: "98.7", logo: "🔥 BODY HEAT", playlist: [{ title: "I Want to Stay at Your House", artist: "Rosa Walton", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }] },
-        { name: "Impulse FM", freq: "99.9", logo: "🔊 IMPULSE", playlist: [{ title: "Metropolis", artist: "DJ Kovalski", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }] },
-        { name: "The Dirge", freq: "101.9", logo: "💀 DIRGE", playlist: [{ title: "Graves", artist: "Konrad OldMoney", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }] },
-        { name: "Radio Pebkac", freq: "103.5", logo: "💻 PEBKAC", playlist: [{ title: "Tinfiddle", artist: "Sebastian Robertson", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }] },
-        { name: "30 Principales", freq: "106.9", logo: "💃 30 PRINC", playlist: [{ title: "Barrio", artist: "Chico", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }] },
-        { name: "Morro Rock Radio", freq: "107.3", logo: "🎸 MORRO", playlist: [{ title: "Never Fade Away", artist: "Samurai", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }] },
-        { name: "Dark Star", freq: "107.5", logo: "☄️ DARK STAR", playlist: [{ title: "Quantum Chaos", artist: "Void", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }] },
-        { name: "Vexelstrom", freq: "101.1", logo: "⚡ VEXEL", playlist: [{ title: "Resist and Disorder", artist: "Rezodrone", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" }] },
-        { name: "Pacific Dreams", freq: "102.7", logo: "🌊 PACIFIC", playlist: [{ title: "Practical Tracks", artist: "Pacific Rim", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" }] },
-        { name: "Night FM", freq: "105.5", logo: "🌃 NIGHT", playlist: [{ title: "Neo-Tokyo Synth", artist: "Vector", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }] },
-        { name: "Radio Samizdat", freq: "91.9", logo: "📻 SAMIZDAT", playlist: [{ title: "Uprising", artist: "Sokolov", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" }] },
-        { name: "Growl FM", freq: "104.3", logo: "🐺 GROWL", playlist: [{ title: "Flatline", artist: "Sasha", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }] },
-        { name: "Downtown Radio", freq: "89.3", logo: "🏙️ DOWNTOWN", playlist: [{ title: "Street Kid Blues", artist: "V", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" }] }
+        { name: "Pacific Dreams", freq: "88.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Downtempo.png", playlist: [{ title: "Friday Night Fire Fight", artist: "The Rubicones", url: "https://cdn.pixabay.com/audio/2026/04/13/audio_9bee257339.mp3" }] },
+        { name: "RADIO VEXELSTORM", freq: "89.3", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.AggroIndie.png", playlist: [{ title: "I Want to Stay at Your House", artist: "Rosa Walton", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }] },
+        { name: "Growl FM", freq: "89.7", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.GrowlFM.png", playlist: [{ title: "Metropolis", artist: "DJ Kovalski", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }] },
+        { name: "Royal Blue Radio", freq: "91.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Jazz.png", playlist: [{ title: "Graves", artist: "Konrad OldMoney", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" }] },
+        { name: "Night FM", freq: "92.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.ElectroIndie.png", playlist: [{ title: "Tinfiddle", artist: "Sebastian Robertson", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" }] },
+        { name: "Samizdat Radio", freq: "95.2", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.MinimTech.png", playlist: [{ title: "Barrio", artist: "Chico", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }] },
+        { name: "Ritual FM", freq: "96.1", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Metal.png", playlist: [{ title: "Never Fade Away", artist: "Samurai", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" }] },
+        { name: "Body Heat Radio", freq: "98.7", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Pop.png", playlist: [{ title: "Quantum Chaos", artist: "Void", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }] },
+        { name: "Impulse", freq: "99.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Impulse.png", playlist: [{ title: "Resist and Disorder", artist: "Rezodrone", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" }] },
+        { name: "The Dirge", freq: "101.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.HipHop.png", playlist: [{ title: "Practical Tracks", artist: "Pacific Rim", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" }] },
+        { name: "Radio PEBKAC", freq: "103.5", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.AggroTechno.png", playlist: [{ title: "Neo-Tokyo Synth", artist: "Vector", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" }] },
+        { name: "30 PRINCIPALES", freq: "106.9", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.Latino.png", playlist: [{ title: "Uprising", artist: "Sokolov", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" }] },
+        { name: "Morro Rock Radio", freq: "107.3", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.AttRock.png", playlist: [{ title: "Flatline", artist: "Sasha", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" }] },
+        { name: "Dark Star", freq: "107.5", logoUrl: "https://static.zhincore.eu/cp/icons/radios/RadioStation.DarkStar.png", playlist: [{ title: "Street Kid Blues", artist: "V", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3" }] }
     ];
 
-    // Baza newsów podzielona na pory dnia (Wklej tutaj adresy URL do swoich plików z GitHuba!)
+    // Baza wiadomości (Podmień te adresy na swoje pliki z GitHuba!)
     const newsDatabase = {
-        morning: [ // 6:00 - 11:59
-            "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" // Zastąp swoim plikiem rannym
+        morning: [
+            "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" // Przykład rano (dodaj więcej analogicznie)
         ],
-        day: [ // 12:00 - 17:59
-            "https://actions.google.com/sounds/v1/science_fiction/teleport_vortex.ogg" // Zastąp swoim plikiem dziennym
+        day: [ // 4 wiadomości na dzień
+            "https://cdn.pixabay.com/audio/2022/09/20/audio_7e2920cf58.mp3", // News dzień 1
+            "https://cdn.pixabay.com/audio/2025/09/08/audio_b80f55a35a.mp3", // News dzień 2
         ],
-        night: [ // 18:00 - 5:59
-            "https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg" // Zastąp swoim plikiem wieczornym/nocnym
+        night: [ // 3 wiadomości na noc
+            "https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg", // News noc 1
+            "https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg", // News noc 2
+            "https://actions.google.com/sounds/v1/alarms/dinner_bell.ogg" // News noc 3
         ]
+    };
+
+    // Tablice pomocnicze do zapamiętywania odtworzonych newsów (zapobiegają powtórzeniom)
+    let playedNewsHistory = {
+        morning: [],
+        day: [],
+        night: []
     };
 
     let currentStationIndex = null;
@@ -327,7 +350,7 @@
     const stationListContainer = document.getElementById('station-list');
     const trackTitleUI = document.getElementById('track-title');
     const trackArtistUI = document.getElementById('track-artist');
-    const stationLogoUI = document.getElementById('station-logo');
+    const logoContainerUI = document.getElementById('station-logo-container');
     const playbackStatusUI = document.getElementById('playback-status');
 
     function buildStationList() {
@@ -351,7 +374,6 @@
         playCurrentTrack();
     }
 
-    // Opcja "Brak stacji" / Wyłączenie radia
     function turnRadioOff() {
         player.pause();
         player.src = "";
@@ -362,7 +384,9 @@
         playedSongsCounter = 0;
 
         document.getElementById('station-off').classList.add('active');
-        stationLogoUI.innerText = "NO SIGNAL";
+        
+        // Przywrócenie placeholdera
+        logoContainerUI.innerHTML = `<div class="cover-placeholder" id="station-placeholder">NO SIGNAL</div>`;
         trackTitleUI.innerText = "RADIOPORT OFF";
         trackArtistUI.innerText = "—";
         playbackStatusUI.innerText = "SYSTEM IDLE";
@@ -379,7 +403,9 @@
         const station = stations[currentStationIndex];
         const track = station.playlist[currentTrackIndex];
 
-        stationLogoUI.innerText = station.logo;
+        // Ustawienie obrazka z URL zamiast tekstu
+        logoContainerUI.innerHTML = `<img src="${station.logoUrl}" alt="${station.name}">`;
+        
         trackTitleUI.innerText = track.title;
         trackArtistUI.innerText = track.artist;
         playbackStatusUI.innerText = "STREAMING...";
@@ -394,7 +420,8 @@
             playCurrentTrack();
         } else {
             playedSongsCounter++;
-            if (newsEnabled && playedSongsCounter >= 4) { // Co 2 piosenki puszcza newsa
+            // Zmiana: Wiadomości włączają się teraz co 4 utwory
+            if (newsEnabled && playedSongsCounter >= 4) { 
                 playedSongsCounter = 0;
                 playNewsBasedOnTime();
             } else {
@@ -403,30 +430,48 @@
         }
     }
 
-    // Dynamiczny dobór newsów do godziny na komputerze
+    // Dobór newsa z systemem unikania powtórzeń (Inteligentna Kolejka)
     function playNewsBasedOnTime() {
         isPlayingNews = true;
         const currentHour = new Date().getHours();
-        let selectedNewsList;
+        let periodKey = "";
         let timePeriodName = "";
 
         if (currentHour >= 6 && currentHour < 12) {
-            selectedNewsList = newsDatabase.morning;
+            periodKey = "morning";
             timePeriodName = "PORANNE WIADOMOŚCI";
         } else if (currentHour >= 12 && currentHour < 18) {
-            selectedNewsList = newsDatabase.day;
+            periodKey = "day";
             timePeriodName = "POŁUDNIOWE WIADOMOŚCI";
         } else {
-            selectedNewsList = newsDatabase.night;
+            periodKey = "night";
             timePeriodName = "NOCNY SERWIS INFORMACYJNY";
         }
 
+        const fullList = newsDatabase[periodKey];
+        let playedList = playedNewsHistory[periodKey];
+
+        // Jeśli wszystkie newsy z danej pory dnia zostały już odtworzone, resetujemy historię
+        if (playedList.length >= fullList.length) {
+            playedList = [];
+            playedNewsHistory[periodKey] = [];
+        }
+
+        // Filtrujemy tylko te newsy, które jeszcze NIE były odtworzone
+        const availableNews = fullList.filter(url => !playedList.includes(url));
+
+        // Wybieramy losowy news z dostępnych nieodtworzonych
+        const randomNewsUrl = availableNews[Math.floor(Math.random() * availableNews.length)];
+        
+        // Zapisujemy wybrany utwór do historii
+        playedNewsHistory[periodKey].push(randomNewsUrl);
+
+        // Wyświetlanie informacji na ekranie
+        logoContainerUI.innerHTML = `<div class="cover-placeholder" style="color: var(--cyber-red); font-size: 24px;">⚠️</div>`;
         trackTitleUI.innerText = `⚠️ ${timePeriodName} ⚠️`;
         trackArtistUI.innerText = "NIGHT CITY RADIO INFO";
         playbackStatusUI.innerText = "BROADCASTING...";
 
-        // Losowanie jednego pliku z wybranej pory dnia
-        const randomNewsUrl = selectedNewsList[Math.floor(Math.random() * selectedNewsList.length)];
         player.src = randomNewsUrl;
         player.play();
     }
